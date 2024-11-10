@@ -91,7 +91,56 @@ int MemoryManager::dumpMemoryMap(char* filename) {
 
 // Placeholder function for getting a list of memory holes
 void* MemoryManager::getList() {
-    return nullptr;
+	// Check if memory is initialized
+	if (!memoryStart) {
+		return nullptr;
+	}
+
+	// Vector to temporarily store free blocks' (offset, length) pairs
+	std::vector<std::pair<uint16_t, uint16_t>> freeBlocks;
+
+	uint16_t startIdx = 0;
+	uint16_t currentBlockSize = 0;
+	bool inFreeBlock = false;
+
+	for (uint16_t i = 0; i < allocationStatus.size(); ++i) {
+		if (!allocationStatus[i]) { // Free block found
+			if (!inFreeBlock) { // Start of a new free block
+				startIdx = i;
+				inFreeBlock = true;
+			}
+			++currentBlockSize;
+		}
+		else if (inFreeBlock) { // End of a free block
+			freeBlocks.emplace_back(startIdx, currentBlockSize);
+			inFreeBlock = false;
+			currentBlockSize = 0;
+		}
+	}
+
+	// If the last segment was free, add it to the list
+	if (inFreeBlock) {
+		freeBlocks.emplace_back(startIdx, currentBlockSize);
+	}
+
+	// Return nullptr if there are no free blocks
+	if (freeBlocks.empty()) {
+		return nullptr;
+	}
+
+	// Allocate a dynamic array to store the free block data in little-endian format
+	size_t listSize = freeBlocks.size() * 2; // Each free block has an offset and length
+	uint16_t* holeList = new uint16_t[listSize + 1]; // +1 for the count of holes at the start
+	holeList[0] = static_cast<uint16_t>(freeBlocks.size()); // Number of free blocks
+
+	// Fill in the offset and length for each free block
+	for (size_t i = 0; i < freeBlocks.size(); ++i) {
+		holeList[2 * i + 1] = freeBlocks[i].first;  // Offset of free block
+		holeList[2 * i + 2] = freeBlocks[i].second; // Length of free block
+	}
+
+	// Return the array as a void pointer
+	return static_cast<void*>(holeList);
 }
 
 // Generates a bitmap representing allocated and free blocks
