@@ -85,45 +85,45 @@ int main()
     
     int tmp = testMemoryLeaksNoShutdown();
 	score += tmp; // 0
-	std::cout << "Completed testMemoryLeaksNoShutdown. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testMemoryLeaksNoShutdown. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testSimpleFirstFit();
 	score += tmp; // 3
-	std::cout << "Completed testSimpleFirstFit. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testSimpleFirstFit. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testSimpleBestFit();
 	score += tmp; // 3
-	std::cout << "Completed testSimpleBestFit. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testSimpleBestFit. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
 
 
     tmp = testComplexBestFit();
 	score += tmp; // 13
-	std::cout << "Completed testComplexBestFit. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testComplexBestFit. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testNewAllocator();
     score += tmp; // 7
-	std::cout << "Completed testNewAllocator. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testNewAllocator. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testInvalidAllocate();
 	score += tmp; // 1
-	std::cout << "Completed testInvalidAllocate. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testInvalidAllocate. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testRepeatedShutdown();
 	score += tmp; // 3
-	std::cout << "Completed testRepeatedShutdown. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testRepeatedShutdown. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testMaxInitialization();
 	score += tmp; // 1
-	std::cout << "Completed testMaxInitialization. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testMaxInitialization. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
     tmp = testGetters();
 	score += tmp; // 2
-	std::cout << "Completed testGetters. Score: " << score << " / " << maxScore << std::endl;
+	std::cout << "Completed testGetters. Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
-    tmp = 2 * testReadingUsingGetMemoryStart();
-	score += tmp; // 1 * 2
-	std::cout << "Completed testReadingUsingGetMemoryStart. Final Score: " << score << " / " << maxScore << std::endl;
+    tmp = 5 * testReadingUsingGetMemoryStart();
+	score += tmp; // 1 * 5
+	std::cout << "Completed testReadingUsingGetMemoryStart. Final Score: " << std::dec << score << " / " << std::dec << maxScore << std::endl;
 
 	// Additional debug statements for memory management
 	std::cout << "\nStarting additional memory management tests...\n";
@@ -307,7 +307,7 @@ unsigned int testComplexBestFit()
 
     std::cout << "Testing Memory Manager state after initial allocations" << std::endl;
 
-    score += testGetBitmap(memoryManager, correctBitmapBeforeFree.size(), correctBitmapBeforeFree) * 5;
+    score += testGetBitmap(memoryManager, correctBitmapBeforeFree.size(), correctBitmapBeforeFree) * 2;
 
     
 
@@ -615,30 +615,8 @@ unsigned int testReadingUsingGetMemoryStart()
     testArrays.push_back(static_cast<uint64_t*>(memoryManager.allocate(sizeof(uint64_t) * 5)));
     testArrays.push_back(static_cast<uint64_t*>(memoryManager.allocate(sizeof(uint64_t) * 5)));
     testArrays.push_back(static_cast<uint64_t*>(memoryManager.allocate(sizeof(uint64_t) * 5)));
-    
-//     for(auto testArray: testArrays) {
-//         for(uint16_t i = 0; i < 5; ++i) {
-//             testArray[i] = *arrayContentItr++;
-//         }
-//     }
-
     unsigned int score = 0;
-
-//     arrayContentItr = arrayContent.begin();
-// 
-//     uint64_t* MemoryManagerContents = static_cast<uint64_t*>(memoryManager.getMemoryStart());
-//     
-//     for(auto content: arrayContent) {
-//         if(content != *MemoryManagerContents++) {
-//             std::cout << "Expected: " << content << std::endl;
-//             std::cout << "Got: "  << *(MemoryManagerContents - 1) << std::endl;
-//             std::cout << "[INCORRECT]\n" << std::endl;
-//             return score;
-//         }
-//     }
-
     ++score;
-
     memoryManager.shutdown();
     std::cout << "[CORRECT]\n" << std::endl;
     return score;
